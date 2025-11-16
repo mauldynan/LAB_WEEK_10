@@ -1,4 +1,4 @@
-package com.example.lab_week_10 // Sesuaikan package name
+package com.example.lab_week_10
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -10,10 +10,6 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.lab_week_10.viewmodels.TotalViewModel
 
 class FirstFragment : Fragment() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -31,14 +27,22 @@ class FirstFragment : Fragment() {
             getString(R.string.text_total, total)
     }
 
+    private fun updateDate(date: String) {
+        view?.findViewById<TextView>(R.id.text_date)?.text = date
+    }
+
     private fun prepareViewModel() {
         val viewModel =
-            ViewModelProvider(requireActivity()).get(TotalViewModel::class.java)
-        viewModel.total.observe(viewLifecycleOwner, { updateText(it)
-        })
+            ViewModelProvider(requireActivity())[TotalViewModel::class.java]
+
+        viewModel.total.observe(viewLifecycleOwner) { totalObject ->
+            updateText(totalObject.value)
+
+            updateDate(totalObject.date)
+        }
     }
 
     companion object {
-        fun newInstance(param1: String, param2: String) = FirstFragment()
+        fun newInstance() = FirstFragment()
     }
 }

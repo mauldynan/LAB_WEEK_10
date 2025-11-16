@@ -3,24 +3,30 @@ package com.example.lab_week_10.viewmodels
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.example.lab_week_10.database.TotalObject
+import java.util.Date // Recommended to import for clean usage
 
 class TotalViewModel: ViewModel() {
-    private val _total = MutableLiveData<Int>()
-    val total: LiveData<Int> = _total
+    private val _total = MutableLiveData<TotalObject>()
+    val total: LiveData<TotalObject> = _total
 
-    //Initialize the LiveData object
     init {
-    //postValue is used to set the value of the LiveData object
-    // from a background thread or the main thread
-    // While on the other hand setValue() is used
-    // only if you're on the main thread
-    _total.postValue(0)
+        _total.postValue(TotalObject())
     }
 
     fun incrementTotal() {
-        _total.postValue(_total.value?.plus(1))
+        val currentObject = _total.value ?: TotalObject()
+
+        // When incrementing, we use the long Date().toString() format.
+        // The cleanup (formatting) is done in MainActivity.onPause() before saving to Room.
+        val newObject = currentObject.copy(
+            value = currentObject.value + 1,
+            date = Date().toString()
+        )
+        _total.postValue(newObject)
     }
-    fun setTotal(newTotal: Int) {
-        _total.postValue(newTotal)
+
+    fun setTotal(newTotalObject: TotalObject) {
+        _total.postValue(newTotalObject)
     }
 }
